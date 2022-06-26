@@ -1,0 +1,179 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2636
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fswiss\fcharset0 Helvetica-Oblique;\f2\fswiss\fcharset0 ArialMT;
+\f3\fswiss\fcharset0 Helvetica-Bold;\f4\froman\fcharset0 Times-Bold;\f5\froman\fcharset0 Times-Roman;
+\f6\fswiss\fcharset0 Arial-ItalicMT;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red255\green255\blue255;\red21\green23\blue25;
+\red175\green180\blue186;\red24\green25\blue27;\red199\green200\blue201;\red251\green0\blue255;\red21\green23\blue25;
+\red251\green0\blue7;\red199\green201\blue201;\red22\green23\blue25;\red213\green255\blue255;\red255\green255\blue255;
+\red251\green0\blue255;\red22\green23\blue25;\red34\green255\blue6;\red22\green23\blue25;\red22\green23\blue25;
+\red255\green255\blue255;\red26\green28\blue31;\red199\green200\blue201;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\cssrgb\c100000\c100000\c99985\c0;\cssrgb\c10980\c11765\c12941;
+\cssrgb\c74118\c75686\c77647;\cssrgb\c12549\c12941\c14118;\cssrgb\c82147\c82540\c82727;\cssrgb\c100000\c7248\c100000;\cssrgb\c10980\c11765\c12941;
+\cssrgb\c100000\c12195\c0;\cssrgb\c82239\c82633\c82717;\cssrgb\c11000\c11786\c12949;\cssrgb\c86188\c100000\c100000;\cssrgb\c100000\c100000\c100000;
+\cssrgb\c100000\c7604\c100000;\cssrgb\c11020\c11808\c12957;\cssrgb\c0\c99725\c0;\cssrgb\c11020\c11808\c12957;\cssrgb\c11000\c11787\c12949;
+\cssrgb\c100000\c100000\c100000\c0;\cssrgb\c13359\c14537\c16089;\cssrgb\c82054\c82447\c82737;}
+\margl1440\margr1440\vieww11920\viewh9260\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs48 \cf2 \cb3 Research View of UTXO confidential transfers for Layer 1 Tokens on Ethereal.  \
+\
+Layer 1 UTXO Confidential Transfer Process.
+\fs24 \
+\
+There\'92s a Homomorphic process that blinds and hides our tokenized assets. There are no negative commitments that ZK encryption accepts to post to the block. The transactions are posted as notes, called \'93XfrNote\'94. The body of this note \'93XfrBody\'94 contains a list \{ of inputs and outputs \}. These records are then BLINDED using the Cryptographic commitments \'93Pedersen commitments\'94 using the Ristretto Elliptic curve.\
+\
+1. Our Input & output creates a blind record called the XFRproof, \
+	* in the body of this Blind asset record, is the asset tracing memo and the owner memo. \
+\
+2. There\'92s a difference between the asset vs the Blind asset record. Everything Committed to the Blind asset runs a Diffie Helmen exchange of numbers that is then placed into the body of the Blind Asset Record (BAR)\
+\
+3. this is known as the Pedersen Commitment : \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\fs26 \cf2 \'97 
+\f1\i A commitment scheme is a cryptographic primitive that allows one to commit to a chosen value while keeping it hidden to others, with the ability to reveal the committed value later. Commitment schemes are designed so that a party cannot change the value or statement after they have committed to it: that is, commitment schemes are binding.
+\f0\i0 \
+
+\fs24 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf2 Question: how do I commit date and store the transaction\'92s contents into the asset Record? \
+Then, how do I apply the Pedersen Commitment to the asset amount recorded on the Blind asset Record?\
+ -> this storage is called the BAR, \'93blind asset record\'94\
+ -> this applies the \'93Bullet proof scheme to the blind asset record, which already has the commitment amount post.\
+Question: What is the XFR proof? \
+> I commit an amount, I blind it (BAR) - when I send the tx I perform XFR - this along with the input and expected output, the xor body is created - this body along with the signatures of both parties of the confidential tx contract, the XFR note is created. \
+>> BAR / XFR Proof / XRF Body / XRF Note > < verified Multi-signature Batch > Verifies XFR Body ( checks asset record is constructed properly) ( the range proof is done first to verify the amount) ( 
+\f2\fs32 \cf4 \cb1 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec4 Chaum Pedersen Equality proof is second to verify the asset type) ( Asset mixing is third to tell whether the asset is confidential or not) == Schnorr proofs of knowledge of discrete logarithms. 
+\f0\fs24 \cf2 \cb3 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 \
+\
+* Verify the note : \
+https://github.com/FindoraNetwork/zei/blob/develop/api/src/xfr/mod.rs#L486\
+1. when verifying the body: it verifies the asset record and tracing proofs. \
+* When verifying the asset Record: performing bulletproof (range proof and asset mixing proof)- \expnd0\expndtw0\kerning0
+> the sigma proof \'93Chaum-Pedersen\'94 protocol, allows a prover with the keys to prove that an El-Gamal cipher-text is valid cipher-text. Sigma is used to denote a sum of multiple terms
+\f2\fs32 \cf5 \cb6 .
+\f0\fs24 \cf2 \cb3 \
+\pard\pardeftab720\partightenfactor0
+\cf2 <>https://courses.grainger.illinois.edu/CS498AC3/fa2020/Files/Lecture_15_Scribe.pdf \
+ - then completing the bulletproof on the sum of the circuits. \kerning1\expnd0\expndtw0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf2  - notes are verified by the Bodies & the Multi-signatures in two separate batches. \
+ > \expnd0\expndtw0\kerning0
+one after the other. For compatibility with WASM, zei library is single-thread by default. and, due to a natural limitation of batching, actually our validators verify each XFR note one after the other.\
+\
+\
+Public Identity Commitment: hash(private key / private string): acts like a public key on chain\
+\
+Question: how are proofs verified? \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb1 \
+\
+
+\f3\b\fs36 \cf8 Technical Specifications : 
+\f0\b0 \cf2 \
+
+\fs24 \
+
+\f4\b \cf0 Schnorr\'92s Protocol
+\f5\b0   :\
+	* A wants to prove his identity to B by showing him that he knows Sa without revealing it.\
+\
+
+\f4\b Bulletproofs :  \
+	* 
+\f5\b0 a range proof that the senders proves they have a non negative amount, relies on elliptic curves, and requires no trusted setup. \
+	** Amount > Binary > commits each bit > proves that the sum of the bits in order is the commitment itself.  \'93
+\f6\i \cf9 recursive inner product argument
+\f2\i0 .\'94\
+
+\f5 \cf0 \
+
+\f0 \cf2 Pedersen Commitments: \
+	\cb10 * \cb10 Pedersen commitments are perfectly hiding, in that a computationally powerful attacker cannot find out the data in the commitment, no matter how powerful this attacker is.\cb10 \
+	\cb10 while, perfect hiding implies imperfect binding, meaning that a computationally powerful attacker can de-commit it to other values. This is often enforced by crypto, saying that such attacker doesn\'92t exist in the real world. This is only used on the Blind asset manager for all committed asset types & amounts.\
+	the commitments are encrypted in the form of a text, and then this txt is decrypted by the reciever once the exchange is then committed and the note is then verified. \
+\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf4 \cb1 \outl0\strokewidth0 \strokec4 Diffie-Hellman key exchange : \
+\cf12 \cb13 \strokec12 https://www.khanacademy.org/computing/computer-science/cryptography/modern-crypt/v/diffie-hellman-key-exchange-part-2\cf4 \cb1 \strokec4 \
+You must agree on a prime modulus and a generator\
+In order to get the shared secret key result to know the prime/mod, you must know\
+Alice or Bob\'92s Private key\'92s in order to break the shared secret. There is two possible keys that can break the prime mod\'92d generator, since both result in the \
+Same Diffie Key. \
+Steps : \
+1. Agree on a Prime Modulus and a Generator Number set \{x,y\}\
+2. Alice selects a PK-A, and uses \{x,y\} x mod y = a public result (z1)\
+	 * the public result is shared to Eve, the middle man and \cf14 \cb15 \strokec16 Bob\cf4 \cb1 \strokec4 , the recipient. \
+3. Bob selects a PK-B, \cf9 \outl0\strokewidth0 and uses \{x,y\} x mod y = a public result (z2)\
+	 * the public result is shared to Eve the middle man and \cf14 \cb17 Alice\cf9 \cb1 , the recipient. \
+4. Alice takes Bob\'92s public Result and raises it to the power of her PK\
+	* z2^PK-A=shared_secret\
+5. \cf9 Bob takes Alice\'92spublic Result and raises it to the power of his PK\
+\pard\pardeftab720\partightenfactor0
+\cf9 	* z1^PK-B=shared_secret\
+6. The Shared_secret is the exact same result.\
+\
+Question: \
+The the Blind asset decryption between party A & B, how does the validator verify the PK or diffuse helman exchange between the two parties without knowing the PK of the Transaction? Does the Validator behave as party C and hold onto the Public results of the Prime Modulus Calculation? \
+\
+\cf19 \cb10 * the validator is NOT involved at all in the Key exchange process. \
+\cf4 \cb1 \outl0\strokewidth0 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs24 \cf4 \strokec4 XfrProofs\'a0structure : it must do a double check summary of the inputs and outputs of the Zero Knowledge Proof it\'92s conducting. The second instance denominates the fee that is then applied before the BAR has been verified.\
+\'93Fee\'92s are dynamic, depending on the network\'94. \
+\
+Once the asset is determined to be an FRA asset, then the fee\'92s are added to the Xfr proof. \
+\
+
+\f3\b Question: Are all UTXO\'92s FRA\'92s?\cf2 \cb20 \outl0\strokewidth0 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \
+Question : How hardened is the \cf4 \cb1 \outl0\strokewidth0 \strokec4 Discrete logarithm problem ? ; since it determines the randomness given by the Pedersen commitment once the BAR is instantiated in the Blind asset Body\
+\
+\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f0\b0\fs48 \cf4 Anonymous Transfers\
+
+\fs24 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf4 zk-SNARKs ; Zero-Knowledge Succinct Non-Interactive Argument of Knowledge
+\f0\fs24 \cf4 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb20 \outl0\strokewidth0 Turbo plonk : requires a trusted setup that has a constraint verification time. \
+\
+\
+
+\fs48 Conceptually __\
+
+\fs24 \
+How to convert a BAR to an ABAR?\
+- we use the 
+\f2\fs32 \cf4 \cb1 \outl0\strokewidth0 \strokec4 TxoSID, which an integer ID of the BAR and a signature corresponding to the public key on the ledger. \
+- proving the amount of the BAR is the same as the ABAR is a different process. \
+ - Anon Key data structure uses a \'93spending key\'94 that is linked to the public key for the transactions to be sent using the BAR<> method. 
+\f0\fs24 \cf2 \cb20 \outl0\strokewidth0 \
+- 
+\f2\fs32 \cf4 \cb1 \outl0\strokewidth0 \strokec4 AXfr Secret Key\'a0 allows you to spend the ABAR\
+- decryption key can encrypt or decrypt the HMAC of the owner, which is the \'93owner memo\'94\
+\pard\pardeftab720\partightenfactor0
+\cf4 - ATxoSID : BAR to ABAR.\
+ABAR consists of asset amount, type, axfr public key, HMAC and merkle root value. \
+\pard\pardeftab720\partightenfactor0
+\cf4 \
+Question: Can you explain the passing of the keys during the BAR<> ABAR routing so we understand where the keys are during the tx-encryption ?\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs24 \cf2 \cb20 \outl0\strokewidth0 \
+\
+\cb21 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf2 \
+}
